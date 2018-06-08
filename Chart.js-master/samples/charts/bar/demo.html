@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Demo Bar Chart</title>
+
+	
+	<script src="/file download/bootstrap/js/Chart.bundle.js"></script>
+	<script src="../../utils.js"></script>
+
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+
+<body>
+	<div id="container" style="width: 75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+	<!-- <button id="randomizeData">Randomize Data</button>
+	<button id="addDataset">Add Dataset</button>
+	<button id="removeDataset">Remove Dataset</button>
+	<button id="addData">Add Data</button>
+	<button id="removeData">Remove Data</button> -->
+	<script>
+		var data = [
+			{"label": "Thai",
+			 "value" : 70 
+			},{
+			"label": "Math",
+			"value" : 50 	
+			},{
+			"label": "Science",
+			"value" : 75 		
+			},{
+			"label": "Statistic",
+			"value" : 95			
+			},
+			{
+			 "label":"Economy",
+			 "value": 55
+			},
+			];
+			
+			var byName = data.slice(0);
+			byName.sort(function(a,b) {
+			    var x = a.label.toLowerCase();
+			    var y = b.label.toLowerCase();
+			    return x < y ? -1 : x > y ? 1 : 0;
+			});
+
+			console.log('by name:');
+			console.log(byName);
+
+			var keylabel = [];
+			var keyvalue = [];
+		for(var i=0;i<data.length;i++){
+
+			keylabel[i] = byName[i].label;
+			keyvalue[i] = byName[i].value;
+
+		
+		}
+		
+		var MONTHS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+		var color = Chart.helpers.color;
+		var barChartData = {
+			labels: keylabel,
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 1,
+				data: keyvalue,
+			}, 
+			// {
+			// 	label: 'Dataset 2',
+			// 	backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+			// 	borderColor: window.chartColors.blue,
+			// 	borderWidth: 1,
+			// 	data: 
+				
+				
+			// }
+			]
+
+		};
+// const CHART = document.getElementById('ctx');
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				
+				type: 'bar',
+				data: barChartData,
+				options: {
+					responsive: true,
+					"hover": {
+     				 "animationDuration": 0
+    			},
+					legend: {
+						position: 'bottom',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart'
+					},
+					 tooltips: {
+     				 "enabled": false
+   					 },
+   					 scales: {
+                		yAxes : [{
+                   		 ticks : {
+                            
+                        min : 0
+                    }
+                }]
+            },
+   					 
+     
+
+      "animation": {
+      "duration": 1,
+
+
+   
+      "onComplete": function() {
+        var chartInstance = this.chart,
+          ctx = chartInstance.ctx;
+
+        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        this.data.datasets.forEach(function(dataset, i) {
+          var meta = chartInstance.controller.getDatasetMeta(i);
+          meta.data.forEach(function(bar, index) {
+            var data = dataset.data[index];
+            ctx.fillText(data, bar._model.x, bar._model.y - 5);
+          });
+        });
+      }
+    },
+				}
+			});
+
+		};
+
+		// document.getElementById('randomizeData').addEventListener('click', function() {
+		// 	var zero = Math.random() < 0.2 ? true : false;
+		// 	barChartData.datasets.forEach(function(dataset) {
+		// 		dataset.data = dataset.data.map(function() {
+		// 			return zero ? 0.0 : randomScalingFactor();
+		// 		});
+
+		// 	});
+		// 	window.myBar.update();
+		// });
+
+		// var colorNames = Object.keys(window.chartColors);
+		// document.getElementById('addDataset').addEventListener('click', function() {
+		// 	var colorName = colorNames[barChartData.datasets.length % colorNames.length];
+		// 	var dsColor = window.chartColors[colorName];
+		// 	var newDataset = {
+		// 		label: 'Dataset ' + barChartData.datasets.length,
+		// 		backgroundColor: color(dsColor).alpha(0.5).rgbString(),
+		// 		borderColor: dsColor,
+		// 		borderWidth: 1,
+		// 		data: []
+		// 	};
+
+		// 	for (var index = 0; index < barChartData.labels.length; ++index) {
+		// 		newDataset.data.push(randomScalingFactor());
+		// 	}
+
+		// 	barChartData.datasets.push(newDataset);
+		// 	window.myBar.update();
+		// });
+
+		// document.getElementById('addData').addEventListener('click', function() {
+		// 	if (barChartData.datasets.length > 0) {
+		// 		var month = MONTHS[barChartData.labels.length % MONTHS.length];
+		// 		barChartData.labels.push(month);
+
+		// 		for (var index = 0; index < barChartData.datasets.length; ++index) {
+		// 			// window.myBar.addData(randomScalingFactor(), index);
+		// 			barChartData.datasets[index].data.push(randomScalingFactor());
+		// 		}
+
+		// 		window.myBar.update();
+		// 	}
+		// });
+
+		// document.getElementById('removeDataset').addEventListener('click', function() {
+		// 	barChartData.datasets.splice(0, 1);
+		// 	window.myBar.update();
+		// });
+
+		// document.getElementById('removeData').addEventListener('click', function() {
+		// 	barChartData.labels.splice(-1, 1); // remove the label first
+
+		// 	barChartData.datasets.forEach(function(dataset) {
+		// 		dataset.data.pop();
+		// 	});
+
+		// 	window.myBar.update();
+		// });
+
+	</script>
+</body>
+
+</html>
